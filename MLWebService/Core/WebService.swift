@@ -37,20 +37,22 @@ public extension WebService {
     @discardableResult
     func request(with request: WebRequest,
                  completion: WebResultBlock?) -> URLSessionTask? {
-        do {
-            let urlRequest = try self.generateURLRequest(from: request)
-            let task = session.dataTask(with: urlRequest) { data, responseObject, error in
-                self.completeQueue.async { completion?(Results(
-                    withData: data,
-                    response: Response(fromURLResponse: responseObject),
-                    error: error
-                )) }
-            }
-            return task
-        } catch let error {
-            self.completeQueue.async { completion?(Results(withError: error)) }
+        guard let urlRequest = generateURLRequest(from: request) else {
+            completion?(Results(withError: WebError.unknown("")))
             return nil
         }
+        
+        let task = session.dataTask(with: urlRequest) { data, responseObject, error in
+            self.completeQueue.async { completion?(Results(
+                withData: data,
+                response: Response(fromURLResponse: responseObject),
+                error: error
+            )) }
+        }
+        DispatchQueue.global().async {
+            task.resume()
+        }
+        return task
     }
     
     @discardableResult
@@ -143,10 +145,10 @@ fileprivate extension WebService {
         return try? JSONSerialization.data(withJSONObject: params, options: .init(rawValue: 0))
     }
     
-    func generateURLRequest(from requestModel: WebRequest) throws -> URLRequest {
+    func generateURLRequest(from requestModel: WebRequest) -> URLRequest? {
         // Query string param
         guard let url = URL(string: requestModel.urlString) else {
-            throw WebError.unknown("Invalid url \(requestModel.urlString)")
+            return nil
         }
         
         var urlRequest = URLRequest(url: url)
@@ -168,14 +170,19 @@ fileprivate extension WebService {
             if let params = requestModel.params {
                 guard
                     var urlcomponent = URLComponents(string: requestModel.urlString)
-                    else { throw WebError.unknown("Invalid url \(requestModel.urlString)") }
+                    else {
+                        return nil
+                }
                 urlcomponent.queryItems = params.reduce([])
                 { (result, element) -> [URLQueryItem] in
                     let (key, value) = element
                     let queryItem = URLQueryItem(name: key, value: "\(value)")
                     return result + [queryItem]
                 }
-                guard let url = urlcomponent.url else { throw WebError.unknown("Invalid url \(requestModel.urlString)") }
+                guard let url = urlcomponent.url else {
+                    return nil
+
+                }
                 urlRequest.url = url
             }
         } // Body params
