@@ -23,7 +23,7 @@ public enum WebError: Error {
 
     public var code: String? {
         switch self {
-        case .httpStatus(let status):
+        case .httpStatus(let status, _):
             return "\(status)"
         case .serverJSONError(let jsonError):
             return jsonError.code
