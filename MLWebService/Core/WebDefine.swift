@@ -35,9 +35,9 @@ public enum WebResponse {
 }
 
 public struct Results {
-    var data: JSON?
-    var response: Response?
-    var error: Error?
+    public var data: JSON?
+    public var response: Response?
+    public var error: Error?
     
     public init(withData data: Data?, response: Response?, error: Error?) {
         if let dataJson = data {
