@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		19E0F3EA711C81B811E42069 /* Pods_MLWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D6D26976351DA2BB245FB00 /* Pods_MLWebService.framework */; };
+		E830AEE024E378AE00730910 /* WebResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E830AEDF24E378AE00730910 /* WebResult.swift */; };
 		E8F91FFA24E250FB004D8700 /* MLWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F91FF824E250FB004D8700 /* MLWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E8F9200424E2531C004D8700 /* WebDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F9200324E2531C004D8700 /* WebDefine.swift */; };
 		E8F9200624E25511004D8700 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F9200524E25511004D8700 /* WebRequest.swift */; };
@@ -30,6 +31,7 @@
 		5D6D26976351DA2BB245FB00 /* Pods_MLWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MLWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2B2FFB156A725A76903D75F /* Pods-MLWebService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLWebService.release.xcconfig"; path = "Target Support Files/Pods-MLWebService/Pods-MLWebService.release.xcconfig"; sourceTree = "<group>"; };
 		CF71782BE462F0F64B5EBDC6 /* Pods-MLWebService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLWebService.debug.xcconfig"; path = "Target Support Files/Pods-MLWebService/Pods-MLWebService.debug.xcconfig"; sourceTree = "<group>"; };
+		E830AEDF24E378AE00730910 /* WebResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebResult.swift; sourceTree = "<group>"; };
 		E8F91FF524E250FB004D8700 /* MLWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8F91FF824E250FB004D8700 /* MLWebService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLWebService.h; sourceTree = "<group>"; };
 		E8F91FF924E250FB004D8700 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				E8F9200F24E272B4004D8700 /* JSONError.swift */,
 				E8F9202924E279F0004D8700 /* WebProviderProtocol.swift */,
 				E8F9202B24E27A5F004D8700 /* WebProvider.swift */,
+				E830AEDF24E378AE00730910 /* WebResult.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8F9200824E2554B004D8700 /* WebServiceProtocol.swift in Sources */,
+				E830AEE024E378AE00730910 /* WebResult.swift in Sources */,
 				E8F9202C24E27A5F004D8700 /* WebProvider.swift in Sources */,
 				E8F9201024E272B4004D8700 /* JSONError.swift in Sources */,
 				E8F9200A24E2559F004D8700 /* WebMultipartRequest.swift in Sources */,

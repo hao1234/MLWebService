@@ -63,3 +63,10 @@ public struct Response {
         httpStatusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
     }
 }
+
+extension NSMutableData {
+    func appendString(_ string: String) {
+        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        append(data!)
+    }
+}

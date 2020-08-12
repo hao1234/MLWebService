@@ -75,7 +75,7 @@ public protocol WebProviderProtocol {
                                     parameters: [String:Any]?,
                                     headers: WebHeaders?,
                                     progressBlock: WebProgressBlock?,
-                                    completion: WebResultBlock?) -> URLSessionUploadTask?
+                                    completion: WebResultBlock?) -> URLSessionDataTask?
 
     /// Requesting upload single image or data multipart request. Default method is POST
     ///
@@ -87,7 +87,7 @@ public protocol WebProviderProtocol {
     @discardableResult
     func uploadDataMultipart(request: WebMultipartRequest,
                              progressBlock: WebProgressBlock?,
-                             completion: WebResultBlock?) -> URLSessionUploadTask?
+                             completion: WebResultBlock?) -> URLSessionDataTask?
 
     /// Update base address
     ///

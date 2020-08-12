@@ -12,13 +12,13 @@ public struct WebMultipartRequest {
 
     public var urlString: String
     public var data: [WebMultipartProtocol]
-    public var parameters: [String:Any]?
+    public var parameters: WebParams?
     public var headers: WebHeaders?
 
     public init(
         urlString: String,
         data: [WebMultipartProtocol],
-        parameters: [String:Any]?,
+        parameters: WebParams?,
         headers: WebHeaders?
     ) {
         self.urlString = urlString

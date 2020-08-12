@@ -75,7 +75,7 @@ public extension WebProvider {
                                     parameters: [String:Any]?,
                                     headers: WebHeaders?,
                                     progressBlock: WebProgressBlock?,
-                                    completion: WebResultBlock?) -> URLSessionUploadTask? {
+                                    completion: WebResultBlock?) -> URLSessionDataTask? {
         
         let urlString = fullURLString(forPath: path)
         let headers = synthesizeHeaders(
@@ -97,7 +97,7 @@ public extension WebProvider {
     
     func uploadDataMultipart(request: WebMultipartRequest,
                              progressBlock: WebProgressBlock?,
-                             completion: WebResultBlock?) -> URLSessionUploadTask? {
+                             completion: WebResultBlock?) -> URLSessionDataTask? {
         
         var request = request
         request.urlString = fullURLString(forPath: request.urlString)

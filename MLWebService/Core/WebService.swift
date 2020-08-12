@@ -43,11 +43,13 @@ public extension WebService {
         }
         
         let task = session.dataTask(with: urlRequest) { data, responseObject, error in
-            self.completeQueue.async { completion?(Results(
+            let result = Results(
                 withData: data,
                 response: Response(fromURLResponse: responseObject),
                 error: error
-            )) }
+            )
+            self.httpLog("Reponse: \(request.urlString) \n \(result.data?.string ?? "empty")")
+            self.completeQueue.async { completion?(result) }
         }
         DispatchQueue.global().async {
             task.resume()
@@ -103,19 +105,39 @@ public extension WebService {
 public extension WebService {
     
     @discardableResult
-    func requestUploadMultipart(_ multipart: WebMultipartRequest,
-                                progressBlock: WebProgressBlock?,
-                                completion: WebResultBlock?) -> URLSessionUploadTask? {
-        return nil
+    func requestUploadMultipart(
+        _ multipart: WebMultipartRequest,
+        progressBlock: WebProgressBlock?,
+        completion: WebResultBlock?) -> URLSessionDataTask? {
+        guard let urlRequest = multipartFormRequestWithMethod(
+            .post,
+            urlString: multipart.urlString,
+            multipart: multipart) else {
+            completion?(Results(withError: WebError.unknown("")))
+            return nil
+        }
+        let task = session.dataTask(with: urlRequest) { data, responseObject, error in
+            self.completeQueue.async { completion?(Results(
+                withData: data,
+                response: Response(fromURLResponse: responseObject),
+                error: error
+            )) }
+        }
+        DispatchQueue.global().async {
+            task.resume()
+        }
+        return task
     }
     
-    func uploadDataMultipart(_ urlString: String,
-                             data: Data,
-                             key: String,
-                             parameters: [String:Any]?,
-                             headers: WebHeaders?,
-                             progressBlock: WebProgressBlock?,
-                             completion: WebResultBlock?) -> URLSessionUploadTask? {
+    func uploadDataMultipart(
+        _ urlString: String,
+        data: Data,
+        key: String,
+        parameters: [String:Any]?,
+        headers: WebHeaders?,
+        progressBlock: WebProgressBlock?,
+        completion: WebResultBlock?
+    ) -> URLSessionDataTask? {
         
         let multipartData = WebMultipartData(data: data,
                                              name: key,
@@ -123,11 +145,12 @@ public extension WebService {
                                              mimeType: "image/jpg")
         let multipartRequest = WebMultipartRequest(urlString: urlString,
                                                    data: [multipartData],
-                                                   parameters: parameters, headers: headers)
+                                                   parameters: parameters,
+                                                   headers: headers)
         
-        return self.requestUploadMultipart(multipartRequest,
-                                           progressBlock: progressBlock,
-                                           completion: completion)
+        return requestUploadMultipart(multipartRequest,
+                                      progressBlock: progressBlock,
+                                      completion: completion)
     }
 }
 
@@ -191,6 +214,61 @@ fileprivate extension WebService {
         }
         self.logRequest(url, method: requestModel.method, encoding: requestModel.encoding, data: urlRequest.httpBody)
         return urlRequest
+    }
+    
+    func multipartFormRequestWithMethod(
+        _ method: WebMethod,
+        urlString: String,
+        multipart: WebMultipartRequest
+    ) -> URLRequest? {
+        guard let url = URL(string: urlString) else {
+            return nil
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = method.rawValue
+        urlRequest.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        
+        let boundary = generateBoundaryString()
+        let body = createBodyWithParameters(multipart.parameters, data: multipart.data, boundary: boundary)
+        urlRequest.httpBody = body
+        urlRequest.setValue("\(body.count)", forHTTPHeaderField: "Content-Length")
+        
+        // Headers
+        multipart.headers?.forEach{ urlRequest.setValue($1, forHTTPHeaderField: $0) }
+        return urlRequest
+    }
+    
+    func createBodyWithParameters(
+        _ parameters: WebParams?,
+        data: [WebMultipartProtocol],
+        boundary: String
+    ) -> Data {
+        let body = NSMutableData()
+        guard let arrData = data as? [WebMultipartData] else { return body as Data }
+        
+        if let parameters = parameters {
+            for (key, value) in parameters {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        arrData.filter{ $0.data != nil }.forEach {
+            let mimetype = $0.mimeType
+            body.appendString("--\(boundary)\r\n")
+            body.appendString("Content-Disposition: form-data; name=\"fileUpload\"; filename=\"\"\r\n")
+            body.appendString("Content-Type: \(mimetype)\r\n\r\n")
+            body.append($0.data!)
+            body.appendString("\r\n")
+            body.appendString("--\(boundary)--\r\n")
+        }
+    
+        return body as Data
+    }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(UUID().uuidString)"
     }
 }
 

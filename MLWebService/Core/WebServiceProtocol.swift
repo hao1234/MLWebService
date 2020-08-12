@@ -69,7 +69,7 @@ public protocol WebServiceProtocol {
                              parameters: [String:Any]?,
                              headers: WebHeaders?,
                              progressBlock: WebProgressBlock?,
-                             completion: WebResultBlock?) -> URLSessionUploadTask?
+                             completion: WebResultBlock?) -> URLSessionDataTask?
 
     /// Requesting upload multipart data
     ///
@@ -81,7 +81,7 @@ public protocol WebServiceProtocol {
     @discardableResult
     func requestUploadMultipart(_ multipart: WebMultipartRequest,
                                 progressBlock: WebProgressBlock?,
-                                completion: WebResultBlock?) -> URLSessionUploadTask?
+                                completion: WebResultBlock?) -> URLSessionDataTask?
 
     /// The logger protocol. Implement it when you wanna change log service
     ///
